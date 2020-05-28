@@ -1,0 +1,16 @@
+sea_zones = RANGE { 8519 8522 } #Aral INR 
+river_provinces = RANGE { 8212 8252 } # Nile Extended 41 
+river_provinces = RANGE { 8253 8272 } # Iberia Extended 20 
+river_provinces = RANGE { 8273 8312 } # Gaulic Extended 40 
+river_provinces = RANGE { 8313 8320 } # Britain 8 
+river_provinces = RANGE { 8321 8338 } # Rhine Extended 18 
+river_provinces = RANGE { 8339 8356 } # Germanic Extended 18 
+river_provinces = RANGE { 8357 8379 } # Baltic 23 
+river_provinces = RANGE { 8380 8396 } # Italian 17 
+river_provinces = RANGE { 8397 8465 } # Danube Extended 67 
+river_provinces = RANGE { 8466 8475 } # Black Sea Tributaries Extended 10 
+river_provinces = RANGE { 8476 8488 } # Caspian Sea Tributaries 13 
+river_provinces = RANGE { 8489 8518 } # Tigris-Euphrates Extended 30 
+river_provinces = RANGE { 8523 8533 } # Oxus 11 
+river_provinces = RANGE { 8534 8561 } # Western India Extended 28  
+river_provinces = RANGE { 8562 8609 } # Ganges Extended  48 
