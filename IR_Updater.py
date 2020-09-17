@@ -32,6 +32,7 @@ from PIL import Image
 import time
 import itertools
 from multiprocessing.pool import ThreadPool as Pool
+import math
 
 class ProvinceDefinition:
     id = 0
@@ -182,30 +183,6 @@ def get_positions(MapPositions):
         x+=1 
     return countyList
 
-def threaded_DrawProvinces(x1,x2,y1,y2,z,smallCountyListNames,newSmallCountyListNames,pixMNR,pixNew):
-    print("%s - %g / %g"%(smallCountyListNames[z].name,z,len(smallCountyListNames)))
-    provinceEnd = False
-    for y in  range(y1,y2):
-        if provinceEnd:
-            break
-        else:
-            for x in range(x1,x2):
-                #print(smallCountyListNames[z].red)
-                if pixMNR[x,y] == (smallCountyListNames[z].red, smallCountyListNames[z].green, smallCountyListNames[z].blue):
-                    pixNew[x,y] = copy.deepcopy((newSmallCountyListNames[z].red, newSmallCountyListNames[z].green, newSmallCountyListNames[z].blue, 255))
-                    #print("%i, %i, %i"%(x,y,z))
-                    #print(pixNew[x,y])
-                    #print(z)
-                    smallCountyListNames[z].lastKnownY = y
-                    #print(y)
-
-            if smallCountyListNames[z].lastKnownY > -1 and y > smallCountyListNames[z].lastKnownY + (y2 * 1/256):
-                #print("poped:\t%s" %smallCountyListNames[z].name)
-                provinceEnd = True
-                print("Poped\t %s - %g / %g"%(smallCountyListNames[z].name,z,len(smallCountyListNames)))
-                break
-    i=0
-
 def draw_UpdatedProvinces(MNRMapProvinces, smallCountyListNames, newSmallCountyListNames, XStart, YStart, XEnd, YEnd, ChropedMap):
     pixMNR = MNRMapProvinces.load()
     img = Image.new(MNRMapProvinces.mode, MNRMapProvinces.size, 'white')
@@ -216,19 +193,25 @@ def draw_UpdatedProvinces(MNRMapProvinces, smallCountyListNames, newSmallCountyL
     else:
         x1,y1=0,0
         x2,y2=MNRMapProvinces.size[0],MNRMapProvinces.size[1]
-    z=0
+    counter = math.ceil((y2-y1)/20)
     #print(len(smallCountyListNames))
+    tupleList = []
+    newTupleList = []
+    for prov in smallCountyListNames:
+        tupleList.append((prov.red,prov.green,prov.blue))
+    for prov in newSmallCountyListNames:
+        newTupleList.append((prov.red,prov.green,prov.blue))
 
-    pool_size = 20
-    pool = Pool(pool_size)
-
-    while z < len(smallCountyListNames):
-        pool.apply_async(threaded_DrawProvinces,(x1,x2,y1,y2,z,smallCountyListNames,newSmallCountyListNames,pixMNR,pixNew,))
-        z+=1
-    pool.close()
-    pool.join()
-        
-
+    #print(tupleList)
+    #print(counter)
+    for y in range(y1,y2):
+        if y%counter == 0:
+            print("%i%%"%((y*5)/counter))
+        for x in range(x1,x2):
+            if pixMNR[x,y] in tupleList:
+                #print(tupleList.index(pixMNR[x,y]))
+                pixNew[x,y] = copy.deepcopy(newTupleList[tupleList.index(pixMNR[x,y])])
+            pass
     img.show()
     img.save("OutPut\\map\\province_OutPut.bmp")
     img.close()
@@ -344,7 +327,7 @@ def update_Area(tmpArea,startingDiffrence):
                 INRAreaOut.write("%s "%element)
         INRAreaOut.write("\n")
 
-def update_Terrain(tmpHistory, startingDiffrence):
+def update_Terrain(tmpHistory, startingDiffrence): #Depricated use update_ProvinceSetup
     INRTerrainOut = open("Output\\setup\\provinces\\01_INR_provinces.txt", 'w')
     numTabs = 0
     for line in tmpHistory:
